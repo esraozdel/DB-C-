@@ -1,0 +1,120 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.OleDb;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+namespace WindowsFormsApplication1
+{
+ public partial class Form1 : Form
+ {
+ OleDbConnection con;
+ OleDbDataAdapter da;
+ OleDbCommandBuilder cb;
+ DataTable dt = new DataTable();
+ DataSet dtst = new DataSet();
+ BindingSource bs = new BindingSource();
+ string conStr = "Provider=Microsoft.Jet.OLEDB.4.0; Data Source =
+C:\\Users\\esra.ozdel\\Desktop\\deneme.mdb";
+
+ public Form1()
+ {
+ InitializeComponent();
+ }
+ private void Form1_Load(object sender, EventArgs e)
+ {
+ con = new OleDbConnection(conStr);
+ da = new OleDbDataAdapter("Select * From ogr", con);
+ cb = new OleDbCommandBuilder(da);
+ da.Fill(dt);
+ bs.DataSource = dt;
+ dataGridView1.DataSource = bs;
+ Kimlik.DataBindings.Add("Text", bs, "Kimlik");
+ ad.DataBindings.Add("Text", bs, "ad");
+ soyad.DataBindings.Add("Text", bs, "soyad");
+ okulno.DataBindings.Add("Text", bs, "okulno");
+ adres.DataBindings.Add("Text", bs, "adres");
+ dataGridView1.ReadOnly = true;
+ }
+ private void button1_Click(object sender, EventArgs e)
+ {
+ bs.AddNew();
+ Kimlik.Focus();
+ }
+ private void button2_Click(object sender, EventArgs e)
+ {
+ bs.EndEdit();
+ }
+ private void button3_Click(object sender, EventArgs e)
+ {
+ bs.CancelEdit();
+ }
+ private void button4_Click(object sender, EventArgs e)
+ {
+ bs.MoveFirst();
+ }
+ private void button5_Click(object sender, EventArgs e)
+ {
+ bs.MoveLast();
+ }
+ private void button6_Click(object sender, EventArgs e)
+ {
+ bs.MovePrevious();
+ }
+ private void button7_Click(object sender, EventArgs e)
+ {
+ bs.MoveNext();
+ }
+ private void button8_Click(object sender, EventArgs e)
+ {
+ int numara = bs.Find("ad", ad.Text);
+ bs.Position = numara;
+ }
+ private void button9_Click(object sender, EventArgs e)
+ {
+ if (MessageBox.Show("Kaydı silmek istediğinizden emin misiniz?", "", MessageBoxButtons.YesNo)
+== DialogResult.Yes)
+ {
+ bs.RemoveCurrent();
+ }
+ }
+ private void button10_Click(object sender, EventArgs e)
+ { con = new OleDbConnection(conStr);
+ con.Open();
+ OleDbCommand kaydet = new OleDbCommand("Insert INTO ogr(Kimlik,ad,soyad,okulno,adres)
+VALUES('" + Kimlik.Text + "','" + ad.Text + "','" + soyad.Text + "','" + okulno.Text + "','" + adres.Text +
+"')", con);
+ kaydet.ExecuteNonQuery();
+ con.Close();
+ }
+ private void button11_Click(object sender, EventArgs e)
+ { con = new OleDbConnection(conStr);
+ con.Open();
+ OleDbCommand kmt = new OleDbCommand();
+ kmt.Connection = con;
+ kmt.CommandText = "update ogr set Kimlik= '" + Kimlik.Text + "',ad='" + ad.Text + "',soyad='" +
+soyad.Text + "',okulno='" + okulno.Text + "' where adres='" + adres.Text + "'";
+ kmt.ExecuteNonQuery();
+ con.Close();
+ }
+ private void button12_Click(object sender, EventArgs e)
+ { con = new OleDbConnection(conStr);
+ con.Open();
+ string sql = "Delete from ogr where ad='" + ad.Text + "'";
+ OleDbCommand cmd = new OleDbCommand(sql, con);
+ cmd.ExecuteNonQuery();
+ con.Close();
+ bs.RemoveCurrent();
+ MessageBox.Show("Silindi");
+ }
+ private void button13_Click(object sender, EventArgs e)
+ { Form2 fr2 = new Form2();
+ this.Visible = false;
+ fr2.ShowDialog();
+ }
+ }
+ }
