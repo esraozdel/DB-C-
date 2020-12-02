@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.OleDb;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+namespace WindowsFormsApplication1
+{
+ public partial class Form2 : Form
+ {
+ public Form2()
+ {
+ InitializeComponent();
+ }
+ private void button1_Click(object sender, EventArgs e)
+ {
+ Form1 fr1 = new Form1();
+ this.Visible = false;
+ fr1.ShowDialog();
+ }
+ private void Form2_Load(object sender, EventArgs e)
+ {
+OleDbConnection con;
+con = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0; Data Source =
+C:\\Users\\esra.ozdel\\Desktop\\deneme.mdb");
+OleDbDataAdapter verial1;
+verial1=new OleDbDataAdapter("Select * From ogr",con);
+DataTable dtKat;
+dtKat=new DataTable("ogr");
+verial1.Fill(dtKat);
+OleDbDataAdapter verial2;
+verial2 = new OleDbDataAdapter("Select * From ogrr", con);
+DataTable dtUrun;
+dtUrun=new DataTable("ogrr");
+verial2.Fill(dtUrun);
+DataSet ds = new DataSet();
+ds.Tables.Add(dtKat);
+ds.Tables.Add(dtUrun);
+DataRelation dr;
+dr=new DataRelation("DERSLER VE ÖĞRENCİ NOTU",dtKat.Columns["ad"],dtUrun.Columns["ad"]);
+ds.Relations.Add(dr);
+dataGrid1.DataSource=ds;
+
+ }
+ }
+}
